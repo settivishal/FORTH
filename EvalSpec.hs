@@ -10,6 +10,19 @@ import Eval
 main :: IO ()
 main = hspec $ do
   describe "eval" $ do
+    context "+" $ do
+        it "adds integers" $ do
+            eval "+" [Integer 5, Integer 10] `shouldBe` [Integer 15]
+        it "adds foating numbers" $ do
+            eval "+" [Real 2.5, Real 10.5] `shouldBe` [Real 13.0]
+            eval "+" [Integer 5, Real 1.3] `shouldBe` [Real 6.3]
+            eval "+" [Real 5.7, Integer 6] `shouldBe` [Real 11.7]
+            eval "+" [Real 9.9, Real 5.1] `shouldBe` [Real 15.0]
+        it "too few arguments" $ do
+            evaluate (eval "+" []) `shouldThrow` errorCall "Stack underflow"
+            evaluate (eval "+" [Integer 30]) `shouldThrow` errorCall "Stack underflow"
+
+
     context "*" $ do
         it "multiplies integers" $ do
             eval "*" [Integer 2, Integer 3] `shouldBe` [Integer 6]
