@@ -35,12 +35,12 @@ main = hspec $ do
             evaluate (eval "+" [Integer 30]) `shouldThrow` errorCall "Stack underflow"
 
     context "-" $ do
-        it "adds integers" $ do
+        it "subtracts integers" $ do
             -- 1
             eval "-" [Integer 5, Integer 10] `shouldBe` [Integer (-5)]
             -- 2
             eval "-" [Integer 20, Integer 4] `shouldBe` [Integer 16]
-        it "adds foating numbers" $ do
+        it "subtracts foating numbers" $ do
             -- 1
             let result = eval "-" [Real 2.5, Real 10.5]
             case result of
@@ -83,6 +83,30 @@ main = hspec $ do
         -- this does not work, seems to be a HSpec bug
         -- it "errors on non-numeric inputs" $ do
         --    evaluate(eval "*" [Real 3.0, Id "x"]) `shouldThrow` anyException
+
+    context "/" $ do
+        it "divide integers" $ do
+            -- 1
+            eval "/" [Integer 10, Integer 5] `shouldBe` [Integer 2]
+            -- 2
+            eval "/" [Integer 6, Integer 100] `shouldBe` [Integer 0]
+        it "divides floating numbers" $ do
+            -- 1
+            eval "/" [Real 10.0, Real 5.0] `shouldBe` [Real 2.0]
+            -- 2
+            eval "/" [Integer 6, Real 100.0] `shouldBe` [Real 0.06]
+            -- 3
+            eval "/" [Real 40.0, Integer 2] `shouldBe` [Real 20.0]
+            -- 4
+            eval "/" [Real 10.0, Integer 4] `shouldBe` [Real 2.5]
+        it "too few arguments" $ do
+            -- 1
+            evaluate (eval "/" []) `shouldThrow` errorCall "Stack underflow"
+            -- 2
+            evaluate (eval "/" [Integer 30]) `shouldThrow` errorCall "Stack underflow"
+        it "divide by zero" $ do
+            -- 1
+            evaluate (eval "/" [Integer 6, Integer 0]) `shouldThrow` errorCall "Division by zero not allowed"
 
     context "DUP" $ do
         it "duplicates values" $ do

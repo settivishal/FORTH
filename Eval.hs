@@ -22,16 +22,36 @@ eval "+" _ = error("Stack underflow")
 eval "-" (Integer x: Integer y:tl) = Integer (x-y) : tl
 -- real numbers
 eval "-" (x:y:tl) = Real (toFloat x - toFloat y) : tl
--- error
+-- errors
 eval "-" _ = error("Stack underflow")
 
 -- Multiplication
--- if arguments are integers, keep result as integer
+-- integers
 eval "*" (Integer x: Integer y:tl) = Integer (x*y) : tl
--- if any argument is float, make result a float
+-- real numbers
 eval "*" (x:y:tl) = (Real $ toFloat x * toFloat y) : tl 
 -- any remaining cases are stacks too short
 eval "*" _ = error("Stack underflow")
+
+-- Division
+-- integer division
+eval "/" (Integer x: Integer y:tl)
+  | y == 0    = error "Division by zero not allowed"
+  | otherwise = Integer (x `div` y) : tl
+-- floating-point division
+eval "/" (Real x: Real y:tl)
+  | y == 0    = error "Division by zero not allowed"
+  | otherwise = Real (x / y) : tl  
+-- floating-point division(convert x integer to float)
+eval "/" (Integer x: Real y:tl)
+  | y == 0    = error "Division by zero"
+  | otherwise = Real (fromIntegral x / y) : tl 
+  -- floating-point division(convert y integer to float)
+eval "/" (Real x: Integer y:tl)
+  | y == 0    = error "Division by zero"
+  | otherwise = Real (x / fromIntegral y) : tl 
+-- error
+eval "/" _ = error("Stack underflow")
 
 
 -- Duplicate the element at the top of the stack
