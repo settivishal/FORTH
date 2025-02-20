@@ -17,6 +17,14 @@ eval "+" (x:y:tl) = Real (toFloat x + toFloat y) : tl
 -- error
 eval "+" _ = error("Stack underflow")
 
+-- Subtraction
+-- integers
+eval "-" (Integer x: Integer y:tl) = Integer (x-y) : tl
+-- real numbers
+eval "-" (x:y:tl) = Real (toFloat x - toFloat y) : tl
+-- error
+eval "-" _ = error("Stack underflow")
+
 -- Multiplication
 -- if arguments are integers, keep result as integer
 eval "*" (Integer x: Integer y:tl) = Integer (x*y) : tl
