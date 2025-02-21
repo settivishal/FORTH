@@ -3,18 +3,58 @@ module Eval where
 
 import Val
 
+roundTo5 :: Float -> Float
+roundTo5 x = fromIntegral (round (x * 100000)) / 100000
+
 -- main evaluation function for operators and 
 -- built-in FORTH functions with no output
 -- takes a string and a stack and returns the stack
 -- resulting from evaluation of the function
 eval :: String -> [Val] -> [Val]
+
+-- Addition
+-- integers
+eval "+" (Integer x: Integer y:tl) = Integer (x+y) : tl
+-- real numbers
+eval "+" (x:y:tl) = Real (toFloat x + toFloat y) : tl
+-- error
+eval "+" _ = error "Stack underflow"
+
+-- Subtraction
+-- integers
+eval "-" (Integer x: Integer y:tl) = Integer (x-y) : tl
+-- real numbers
+eval "-" (x:y:tl) = Real (toFloat x - toFloat y) : tl
+-- errors
+eval "-" _ = error "Stack underflow"
+
 -- Multiplication
--- if arguments are integers, keep result as integer
+-- integers
 eval "*" (Integer x: Integer y:tl) = Integer (x*y) : tl
--- if any argument is float, make result a float
+-- real numbers
 eval "*" (x:y:tl) = (Real $ toFloat x * toFloat y) : tl 
 -- any remaining cases are stacks too short
-eval "*" _ = error("Stack underflow")
+eval "*" _ = error "Stack underflow"
+
+-- Division
+-- integer division
+eval "/" (Integer x: Integer y:tl)
+  | y == 0    = error "Division by zero not allowed"
+  | otherwise = Real (roundTo5(fromIntegral x / fromIntegral y)) : tl
+-- floating-point division
+eval "/" (Real x: Real y:tl)
+  | y == 0    = error "Division by zero not allowed"
+  | otherwise = Real (roundTo5(x / y)) : tl  
+-- floating-point division(convert x integer to float)
+eval "/" (Integer x: Real y:tl)
+  | y == 0    = error "Division by zero not allowed"
+  | otherwise = Real (roundTo5(fromIntegral x / y)) : tl 
+  -- floating-point division(convert y integer to float)
+eval "/" (Real x: Integer y:tl)
+  | y == 0    = error "Division by zero not allowed"
+  | otherwise = Real (roundTo5(x / fromIntegral y)) : tl 
+-- error
+eval "/" _ = error("Stack underflow")
 
 
 -- Duplicate the element at the top of the stack

@@ -7,9 +7,66 @@ import Control.Exception (evaluate)
 import Val
 import Eval
 
+isCloseEnough :: Float -> Float -> Bool
+isCloseEnough x y = abs (x - y) < 0.0001
+
 main :: IO ()
 main = hspec $ do
   describe "eval" $ do
+    context "+" $ do
+        it "adds integers" $ do
+            -- 1
+            eval "+" [Integer 5, Integer 10] `shouldBe` [Integer 15]
+            -- 2
+            eval "+" [Integer 6, Integer 90] `shouldBe` [Integer 96]
+        it "adds foating numbers" $ do
+            -- 1
+            eval "+" [Real 2.5, Real 10.5] `shouldBe` [Real 13.0]
+            -- 2
+            eval "+" [Integer 5, Real 1.3] `shouldBe` [Real 6.3]
+            -- 3
+            eval "+" [Real 5.7, Integer 6] `shouldBe` [Real 11.7]
+            -- 4
+            eval "+" [Real 9.9, Real 5.1] `shouldBe` [Real 15.0]
+        it "too few arguments" $ do
+            -- 1
+            evaluate (eval "+" []) `shouldThrow` errorCall "Stack underflow"
+            -- 2
+            evaluate (eval "+" [Integer 30]) `shouldThrow` errorCall "Stack underflow"
+
+    context "-" $ do
+        it "subtracts integers" $ do
+            -- 1
+            eval "-" [Integer 5, Integer 10] `shouldBe` [Integer (-5)]
+            -- 2
+            eval "-" [Integer 20, Integer 4] `shouldBe` [Integer 16]
+        it "subtracts foating numbers" $ do
+            -- 1
+            let result = eval "-" [Real 2.5, Real 10.5]
+            case result of
+                [Real x] -> x `shouldSatisfy` isCloseEnough (-8.0)
+                _        -> expectationFailure "Expected a single Real value"
+            -- 2
+            let result = eval "-" [Integer 5, Real 1.3]
+            case result of
+                [Real x] -> x `shouldSatisfy` isCloseEnough 3.7
+                _        -> expectationFailure "Expected a single Real value"
+            -- 3
+            let result = eval "-" [Real 5.5, Integer 6]
+            case result of
+                [Real x] -> x `shouldSatisfy` isCloseEnough (-0.5)
+                _        -> expectationFailure "Expected a single Real value"
+            -- 4
+            let result = eval "-" [Real 9.9, Real 5.1]
+            case result of
+                [Real x] -> x `shouldSatisfy` isCloseEnough 4.8
+                _        -> expectationFailure "Expected a single Real value"
+        it "too few arguments" $ do
+            -- 1
+            evaluate (eval "-" []) `shouldThrow` errorCall "Stack underflow"
+            -- 2
+            evaluate (eval "-" [Integer 5]) `shouldThrow` errorCall "Stack underflow"
+
     context "*" $ do
         it "multiplies integers" $ do
             eval "*" [Integer 2, Integer 3] `shouldBe` [Integer 6]
@@ -26,6 +83,32 @@ main = hspec $ do
         -- this does not work, seems to be a HSpec bug
         -- it "errors on non-numeric inputs" $ do
         --    evaluate(eval "*" [Real 3.0, Id "x"]) `shouldThrow` anyException
+
+    context "/" $ do
+        it "divide integers" $ do
+            -- 1
+            eval "/" [Integer 10, Integer 5] `shouldBe` [Real 2.0]
+            -- 2
+            eval "/" [Integer 6, Integer 100] `shouldBe` [Real 0.06]
+            -- 3
+            eval "/" [Integer 59, Integer 3] `shouldBe` [Real 19.66667]
+        it "divides floating numbers" $ do
+            -- 1
+            eval "/" [Real 10.0, Real 5.0] `shouldBe` [Real 2.0]
+            -- 2
+            eval "/" [Integer 6, Real 100.0] `shouldBe` [Real 0.06]
+            -- 3
+            eval "/" [Real 40.0, Integer 2] `shouldBe` [Real 20.0]
+            -- 4
+            eval "/" [Real 22.0, Integer 4] `shouldBe` [Real 5.5]
+        it "too few arguments" $ do
+            -- 1
+            evaluate (eval "/" []) `shouldThrow` errorCall "Stack underflow"
+            -- 2
+            evaluate (eval "/" [Integer 30]) `shouldThrow` errorCall "Stack underflow"
+        it "divide by zero" $ do
+            -- 1
+            evaluate (eval "/" [Integer 6, Integer 0]) `shouldThrow` errorCall "Division by zero not allowed"
 
     context "DUP" $ do
         it "duplicates values" $ do
