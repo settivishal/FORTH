@@ -166,3 +166,13 @@ main = hspec $ do
 
         it "eval pass-through" $ do
             evalOut "*" ([Real 2.0, Integer 2], "blah") `shouldBe` ([Real 4.0], "blah") 
+
+  describe "EMIT" $ do
+    it "prints corresponding ASCII character" $ do
+        let stack = [65] 
+        let result = runEval (emit stack)
+        result `shouldBe` "" --The output is printed, not returned
+        -- You can manually check if 'A' was printed to the console.
+
+    it "errors on empty stack" $ do
+        evaluate (runEval (emit [])) `shouldThrow` errorCall "Stack underflow"

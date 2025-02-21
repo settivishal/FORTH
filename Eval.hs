@@ -89,3 +89,10 @@ evalOut "." ([], _) = error "Stack underflow"
 -- this has to be the last case
 -- if no special case, ask eval to deal with it and propagate output
 evalOut op (stack, out) = (eval op stack, out)
+
+-- Emit function
+emit :: Stack -> IO Stack
+emit (x:xs) = do
+    putChar (toEnum x)
+    return xs
+emit _ = error "EMIT requires a non-empty stack"
