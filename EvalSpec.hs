@@ -110,6 +110,41 @@ main = hspec $ do
             -- 1
             evaluate (eval "/" [Integer 6, Integer 0]) `shouldThrow` errorCall "Division by zero not allowed"
 
+    context "^" $ do
+        it "raises integers to a power" $ do
+            -- 1
+            eval "^" [Integer 2, Integer 3] `shouldBe` [Integer 8]
+            -- 2
+            eval "^" [Integer 5, Integer 0] `shouldBe` [Integer 1]
+            -- 3
+            eval "^" [Integer 7, Integer 1] `shouldBe` [Integer 7]
+
+        it "raises real numbers to a power" $ do
+            -- 1
+            eval "^" [Real 2.0, Real 3.0] `shouldBe` [Real 8.0]
+            -- 2
+            eval "^" [Real 4.0, Real 0.5] `shouldBe` [Real 2.0]
+            -- 3
+            eval "^" [Real 9.0, Real 0.5] `shouldBe` [Real 3.0]
+
+        it "handles integer base with real exponent" $ do
+            -- 1
+            eval "^" [Integer 2, Real 3.5] `shouldBe` [Real 11.313708]
+            -- 2
+            eval "^" [Integer 10, Real 2.0] `shouldBe` [Real 100.0]
+
+        it "handles real base with integer exponent" $ do
+            -- 1
+            eval "^" [Real 2.5, Integer 2] `shouldBe` [Real 6.25]
+            -- 2
+            eval "^" [Real 3.0, Integer 3] `shouldBe` [Real 27.0]
+
+        it "errors on too few arguments" $ do
+            -- 1
+            evaluate (eval "^" []) `shouldThrow` errorCall "Stack underflow"
+            -- 2
+            evaluate (eval "^" [Integer 2]) `shouldThrow` errorCall "Stack underflow"
+
     context "DUP" $ do
         it "duplicates values" $ do
             eval "DUP" [Integer 2] `shouldBe` [Integer 2, Integer 2]
@@ -120,7 +155,7 @@ main = hspec $ do
             evaluate (eval "DUP" []) `shouldThrow` errorCall "Stack underflow"
 
   describe "evalOut" $ do
-      context "." $ do
+    context "." $ do
         it "prints top of stack" $ do
             evalOut "." ([Id "x"], "") `shouldBe` ([],"x")
             evalOut "." ([Integer 2], "") `shouldBe` ([], "2")
@@ -129,5 +164,5 @@ main = hspec $ do
         it "errors on empty stack" $ do
             evaluate(evalOut "." ([], "")) `shouldThrow` errorCall "Stack underflow"
 
-      it "eval pass-through" $ do
-         evalOut "*" ([Real 2.0, Integer 2], "blah") `shouldBe` ([Real 4.0], "blah") 
+        it "eval pass-through" $ do
+            evalOut "*" ([Real 2.0, Integer 2], "blah") `shouldBe` ([Real 4.0], "blah") 

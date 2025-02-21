@@ -54,8 +54,19 @@ eval "/" (Real x: Integer y:tl)
   | y == 0    = error "Division by zero not allowed"
   | otherwise = Real (roundTo5(x / fromIntegral y)) : tl 
 -- error
-eval "/" _ = error("Stack underflow")
+eval "/" _ = error "Stack underflow"
 
+-- Exponentiation
+-- integer exponentiation
+eval "^" (Integer x: Integer y:tl) = Integer (x ^ y) : tl
+-- real exponentiation
+eval "^" (Real x: Real y:tl) = Real (x ** y) : tl
+-- integer base, real exponent
+eval "^" (Integer x: Real y:tl) = Real (fromIntegral x ** y) : tl
+-- real base, integer exponent
+eval "^" (Real x: Integer y:tl) = Real (x ** fromIntegral y) : tl
+-- error
+eval "^" _ = error "Stack underflow"
 
 -- Duplicate the element at the top of the stack
 eval "DUP" (x:tl) = (x:x:tl)
