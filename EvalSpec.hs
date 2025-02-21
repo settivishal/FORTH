@@ -87,9 +87,11 @@ main = hspec $ do
     context "/" $ do
         it "divide integers" $ do
             -- 1
-            eval "/" [Integer 10, Integer 5] `shouldBe` [Integer 2]
+            eval "/" [Integer 10, Integer 5] `shouldBe` [Real 2.0]
             -- 2
-            eval "/" [Integer 6, Integer 100] `shouldBe` [Integer 0]
+            eval "/" [Integer 6, Integer 100] `shouldBe` [Real 0.06]
+            -- 3
+            eval "/" [Integer 59, Integer 3] `shouldBe` [Real 19.66667]
         it "divides floating numbers" $ do
             -- 1
             eval "/" [Real 10.0, Real 5.0] `shouldBe` [Real 2.0]
@@ -98,7 +100,7 @@ main = hspec $ do
             -- 3
             eval "/" [Real 40.0, Integer 2] `shouldBe` [Real 20.0]
             -- 4
-            eval "/" [Real 10.0, Integer 4] `shouldBe` [Real 2.5]
+            eval "/" [Real 22.0, Integer 4] `shouldBe` [Real 5.5]
         it "too few arguments" $ do
             -- 1
             evaluate (eval "/" []) `shouldThrow` errorCall "Stack underflow"
