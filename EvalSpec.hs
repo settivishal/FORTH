@@ -80,10 +80,6 @@ main = hspec $ do
             evaluate (eval "*" []) `shouldThrow` errorCall "Stack underflow"
             evaluate (eval "*" [Integer 2]) `shouldThrow` errorCall "Stack underflow"
 
-        -- this does not work, seems to be a HSpec bug
-        -- it "errors on non-numeric inputs" $ do
-        --    evaluate(eval "*" [Real 3.0, Id "x"]) `shouldThrow` anyException
-
     context "/" $ do
         it "divide integers" $ do
             -- 1
