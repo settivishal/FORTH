@@ -162,6 +162,7 @@ main = hspec $ do
             -- 2
             evaluate (eval "%" [Integer 30]) `shouldThrow` errorCall "Stack underflow"
 
+    -- Negation
     context "NEG" $ do
         it "negates integers" $ do
             -- 1
@@ -180,6 +181,7 @@ main = hspec $ do
             -- 1
             evaluate (eval "NEG" []) `shouldThrow` errorCall "Stack underflow"
 
+    -- Duplicate
     context "DUP" $ do
         it "duplicates values" $ do
             eval "DUP" [Integer 2] `shouldBe` [Integer 2, Integer 2]
