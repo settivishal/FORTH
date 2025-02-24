@@ -2,6 +2,7 @@ module Eval where
 -- This file contains definitions for functions and operators
 
 import Val
+import Data.Fixed(mod')
 
 roundTo5 :: Float -> Float
 roundTo5 x = fromIntegral (round (x * 100000)) / 100000
@@ -67,6 +68,30 @@ eval "^" (Integer x: Real y:tl) = Real (fromIntegral x ** y) : tl
 eval "^" (Real x: Integer y:tl) = Real (x ** fromIntegral y) : tl
 -- error
 eval "^" _ = error "Stack underflow"
+
+-- Modulo
+-- integer modulo operation
+eval "%" (Integer x: Integer y:tl) = Integer (x `mod` y) : tl
+-- real modulo operation
+eval "%" (Real x: Real y:tl) = Real (x `mod'` y) : tl
+-- integer base, real modulo
+eval "%" (Integer x: Real y:tl) = Real (fromIntegral x `mod'` y) : tl
+-- real base, integer modulo
+eval "%" (Real x: Integer y:tl) = Real (x `mod'` fromIntegral y) : tl
+-- error
+eval "%" [] = error "Stack underflow"
+eval "%" [_] = error "Stack underflow"
+eval "%" _ = error "Type mismatch in %"
+
+-- Negation
+-- negation for integers
+eval "NEG" (Integer x : tl) = Integer (-x) : tl
+-- negation for real numbers
+eval "NEG" (Real x : tl)    = Real (-x) : tl
+-- error for empty stack
+eval "NEG" []               = error "Stack underflow"
+-- error for type mismatch
+eval "NEG" _                = error "Type mismatch in NEG"
 
 -- Duplicate the element at the top of the stack
 eval "DUP" (x:tl) = (x:x:tl)

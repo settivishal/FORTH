@@ -1,6 +1,3 @@
--- HSpec tests for Val.hs
--- Execute: runhaskell EvalSpec.hs
-
 import Test.Hspec
 import Test.QuickCheck
 import Control.Exception (evaluate)
@@ -141,6 +138,50 @@ main = hspec $ do
             -- 2
             evaluate (eval "^" [Integer 2]) `shouldThrow` errorCall "Stack underflow"
 
+    -- Modulo
+    context "%" $ do
+        it "modulus integers" $ do
+            -- 1
+            eval "%" [Integer 11, Integer 5] `shouldBe` [Integer 1]
+            -- 2
+            eval "%" [Integer 6, Integer 100] `shouldBe` [Integer 6]
+            -- 3
+            eval "%" [Integer 59, Integer 3] `shouldBe` [Integer 2]
+        it "modulus floating numbers" $ do
+            -- 1
+            eval "%" [Real 10.0, Real 5.0] `shouldBe` [Real 0.0]
+            -- 2
+            eval "%" [Integer 6, Real 100.0] `shouldBe` [Real 6.0]
+            -- 3
+            eval "%" [Real 40.0, Integer 2] `shouldBe` [Real 0.0]
+            -- 4
+            eval "%" [Real 22.0, Integer 4] `shouldBe` [Real 2.0]
+        it "too few arguments" $ do
+            -- 1
+            evaluate (eval "%" []) `shouldThrow` errorCall "Stack underflow"
+            -- 2
+            evaluate (eval "%" [Integer 30]) `shouldThrow` errorCall "Stack underflow"
+
+    -- Negation
+    context "NEG" $ do
+        it "negates integers" $ do
+            -- 1
+            eval "NEG" [Integer 5] `shouldBe` [Integer (-5)]
+            -- 2
+            eval "NEG" [Integer (-3)] `shouldBe` [Integer 3]
+        it "negates floating numbers" $ do
+            -- 1
+            eval "NEG" [Real 2.5] `shouldBe` [Real (-2.5)]
+            -- 2
+            eval "NEG" [Real (-7.1)] `shouldBe` [Real 7.1]
+        it "errors on empty stack" $ do
+            -- 1
+            evaluate (eval "NEG" []) `shouldThrow` errorCall "Stack underflow"
+        it "errors on type mismatch" $ do
+            -- 1
+            evaluate (eval "NEG" []) `shouldThrow` errorCall "Stack underflow"
+
+    -- Duplicate
     context "DUP" $ do
         it "duplicates values" $ do
             eval "DUP" [Integer 2] `shouldBe` [Integer 2, Integer 2]
