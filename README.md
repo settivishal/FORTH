@@ -22,12 +22,7 @@ This project implements a FORTH interpreter in Haskell. The interpreter is capab
 
 ## Installation
 
-Clone the repository and navigate to the project directory:
-
-```bash
-git clone <repository-url>
-cd forth-interpreter
-```
+Extract the archive and follow the commands in the next section.
 
 ## Build & Run Instructions
 
