@@ -191,15 +191,89 @@ main = hspec $ do
         it "errors on empty stack" $ do
             evaluate (eval "DUP" []) `shouldThrow` errorCall "Stack underflow"
 
+    -- EMIT
+    context "EMIT" $ do
+        it "prints the character corresponding to ASCII code" $ do
+            -- For ASCII 65 (A)
+            eval "EMIT" [Integer 65] `shouldBe` []  -- The character "A" will be printed to the console
+
+            -- For ASCII 97 (a)
+            eval "EMIT" [Integer 97] `shouldBe` []  -- The character "a" will be printed to the console
+
+            -- For ASCII 48 (0)
+            eval "EMIT" [Integer 48] `shouldBe` []  -- The character "0" will be printed to the console
+
+        it "throws error on non-integer value" $ do
+            evaluate (eval "EMIT" [Real 65.0]) `shouldThrow` errorCall "Type mismatch in EMIT"
+            evaluate (eval "EMIT" [Id "not an integer"]) `shouldThrow` errorCall "Type mismatch in EMIT"
+
+    -- STR
+    context "STR" $ do
+        it "converts integers to strings" $ do
+            eval "STR" [Integer 5] `shouldBe` [Id "5"]
+            eval "STR" [Integer (-123)] `shouldBe` [Id "-123"]
+
+        it "converts real numbers to strings" $ do
+            eval "STR" [Real 3.14] `shouldBe` [Id "3.14"]
+            eval "STR" [Real (-0.01)] `shouldBe` [Id "-0.01"]
+
+        it "converts Ids to strings (no change)" $ do
+            eval "STR" [Id "hello"] `shouldBe` [Id "hello"]
+            eval "STR" [Id "42"] `shouldBe` [Id "42"]
+
+        it "throws error on empty stack" $ do
+            evaluate (eval "STR" []) `shouldThrow` errorCall "Stack underflow"
+
+        -- CONCAT2
+    context "CONCAT2" $ do
+        it "concatenates two strings" $ do
+            eval "CONCAT2" [Id "Hello", Id " World"] `shouldBe` [Id "Hello World"]
+            eval "CONCAT2" [Id "foo", Id "bar"] `shouldBe` [Id "foobar"]
+            eval "CONCAT2" [Id "123", Id "abc"] `shouldBe` [Id "123abc"]
+        
+        it "throws error if there are not exactly two arguments" $ do
+            evaluate (eval "CONCAT2" [Id "Hello"]) `shouldThrow` errorCall "Type mismatch in CONCAT2"
+            evaluate (eval "CONCAT2" []) `shouldThrow` errorCall "Type mismatch in CONCAT2"
+
+    -- CONCAT3
+    context "CONCAT3" $ do
+        it "concatenates three strings" $ do
+            eval "CONCAT3" [Id "Hello", Id " ", Id "World"] `shouldBe` [Id "Hello World"]
+            eval "CONCAT3" [Id "foo", Id "bar", Id "baz"] `shouldBe` [Id "foobarbaz"]
+            eval "CONCAT3" [Id "1", Id "2", Id "3"] `shouldBe` [Id "123"]
+        
+        it "throws error if there are not exactly three arguments" $ do
+            evaluate (eval "CONCAT3" [Id "Hello", Id "World"]) `shouldThrow` errorCall "Type mismatch in CONCAT3"
+            evaluate (eval "CONCAT3" [Id "foo", Id "bar"]) `shouldThrow` errorCall "Type mismatch in CONCAT3"
+            evaluate (eval "CONCAT3" []) `shouldThrow` errorCall "Type mismatch in CONCAT3"
+
   describe "evalOut" $ do
     context "." $ do
         it "prints top of stack" $ do
-            evalOut "." ([Id "x"], "") `shouldBe` ([],"x")
-            evalOut "." ([Integer 2], "") `shouldBe` ([], "2")
-            evalOut "." ([Real 2.2], "") `shouldBe` ([], "2.2")
+            evalOut "." ([Id "x"], "") `shouldBe` ([Id "x"],"x")
+            evalOut "." ([Integer 2], "") `shouldBe` ([Integer 2], "2")
+            evalOut "." ([Real 2.2], "") `shouldBe` ([Real 2.2], "2.2")
 
         it "errors on empty stack" $ do
             evaluate(evalOut "." ([], "")) `shouldThrow` errorCall "Stack underflow"
 
         it "eval pass-through" $ do
-            evalOut "*" ([Real 2.0, Integer 2], "blah") `shouldBe` ([Real 4.0], "blah") 
+            evalOut "*" ([Real 2.0, Integer 2], "blah") `shouldBe` ([Real 4.0], "blah")
+
+    -- CR (Newline)
+    context "CR" $ do
+        it "prints a newline" $ do
+            evalOut "CR" ([Id "x"], "") `shouldBe` ([Id "x"], "\n")
+            evalOut "CR" ([Integer 2], "") `shouldBe` ([Integer 2], "\n")
+            evalOut "CR" ([Real 2.2], "") `shouldBe` ([Real 2.2], "\n")
+
+        it "does not alter the stack" $ do
+            evalOut "CR" ([Id "x", Integer 3], "") `shouldBe` ([Id "x", Integer 3], "\n")
+            evalOut "CR" ([Real 3.0, Integer 5], "") `shouldBe` ([Real 3.0, Integer 5], "\n")
+
+        it "works when stack is empty" $ do
+            evalOut "CR" ([], "") `shouldBe` ([], "\n")
+
+        it "preserves previous output" $ do
+            evalOut "CR" ([Id "x"], "First output") `shouldBe` ([Id "x"], "First output\n")
+            evalOut "CR" ([Real 3.0], "Initial text") `shouldBe` ([Real 3.0], "Initial text\n")

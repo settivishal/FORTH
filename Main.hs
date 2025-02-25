@@ -2,6 +2,8 @@ module Main where
 
 import Interpret
 import System.Environment
+import System.Environment (getArgs)
+import Control.Monad (forM_)
 
 -- Function to check and print stack status
 checkStack :: Show a => [a] -> IO ()
@@ -13,14 +15,16 @@ checkStack stack = do
 main :: IO ()
 main = do
     -- Get the command-line arguments (file path)
-    (fileName:tl) <- getArgs
-    -- Read the file content
-    contents <- readFile fileName
-    -- Interpret the contents (assumed to return a tuple with stack and output)
-    let (stack, output) = interpret contents
-    
-    -- Print the output from the interpretation
-    putStrLn output
-    
-    -- Check and print the status of the stack
-    checkStack stack
+    args <- getArgs
+    forM_ args $ \file -> do
+        putStrLn $ "Processing file: " ++ file
+        -- Read the file content
+        contents <- readFile file
+        -- Interpret the contents (assumed to return a tuple with stack and output)
+        let (stack, output) = interpret contents
+        
+        -- Print the output from the interpretation
+        putStrLn output
+        
+        -- Check and print the status of the stack
+        checkStack stack
