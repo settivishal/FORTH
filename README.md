@@ -95,10 +95,56 @@ To clean build artifacts:
 make clean
 ```
 
-## Project Structure
+## FORTH Interpreter Project Structure
 
-- `tests/` - Test FORTH programs (*.4TH files)
-- `EvalSpec.hs` - Test specifications for evaluating the interpreter
+```
+FORTH/
+├── dist-newstyle/            # Cabal build directory
+├── tests/                    # Test FORTH programs
+│   ├── t1.4TH                # Test file 1
+│   ├── t2.4TH                # Test file 2
+│   ├── t3.4TH                # Test file 3
+│   ├── t4.4TH                # Test file 4
+│   ├── t5.4TH                # Test file 5
+│   ├── t6.4TH                # Test file 6
+│   ├── t7.4TH                # Test file 7
+│   ├── t8.4TH                # Test file 8
+│   ├── t9.4TH                # Test file 9
+│   └── t10.4TH               # Test file 10
+├── Eval.hs                   # Evaluation logic for FORTH code
+├── EvalSpec.hs               # Test specifications for Eval module
+├── FORTH.cabal               # Cabal project file
+├── Interpret.hs              # Core interpreter implementation
+├── InterpretSpec.hs          # Test specifications for Interpret module
+├── Main.hs                   # Main program entry point
+├── makefile                  # Makefile with build commands
+├── README.md                 # Project documentation
+├── Requirements.md           # Project requirements documentation
+├── Setup.hs                  # Cabal setup script
+├── Val.hs                    # Value representation for FORTH
+└── ValSpec.hs                # Test specifications for Val module
+```
+
+### Core Components
+
+- **Main.hs**: Entry point of the application, handles command-line arguments and orchestrates the interpretation process.
+- **Eval.hs**: Contains the evaluation logic for FORTH expressions and statements.
+
+### Testing
+
+- **EvalSpec.hs**: Unit tests for the evaluation logic
+- **tests/*.4TH**: FORTH code files used for testing the interpreter
+
+### Build System
+
+- **FORTH.cabal**: Cabal configuration file defining project metadata, dependencies, and build instructions
+- **makefile**: Contains build, test, and run commands for the project
+
+### Documentation
+
+- **README.md**: Overview, installation, and usage instructions
+- **Requirements.md**: Detailed requirements and specifications for the project
+
 
 ## Implementation Notes
 
@@ -107,20 +153,16 @@ make clean
 - Basic arithmetic operations (`+`, `-`, `*`, `/`, `^`, `%`, `MOD`, `NEG`)
 - Stack operations (`DUP`, `EMIT`, `STR`, `CR`, `CONCAT2`, `CONCAT3`)
 
-### Challenges Encountered
-
-1. **Stack Management**: Implementing the stack operations required careful tracking of stack state during execution.
-
-2. **Control Flow**: The non-traditional control flow in FORTH (with `IF`, `BEGIN`, etc.) needed special handling in the parser and evaluator.
-
-3. **Word Definitions**: Creating a mechanism to define and later execute custom words (functions) was complex, requiring a dictionary structure to store these definitions.
-
-4. **Variable Scope**: Managing variable scope and ensuring proper variable resolution during execution required careful design.
-
-5. **Error Handling**: Robust error handling was implemented to catch common FORTH programming errors like stack underflow or undefined words.
-
 ## Testing Approach
 
 - The test suite in `EvalSpec.hs` covers various aspects of the interpreter.
 
 - The `tests/` directory contains FORTH programs to verify the interpreter's functionality.
+
+### Challenges Encountered
+
+1. **Stack Management**: Implementing the stack operations required careful tracking of stack state during execution.
+
+3. **Word Definitions**: Creating a mechanism to define and later execute custom words (functions) was complex, requiring a dictionary structure to store these definitions.
+
+5. **Error Handling**: Robust error handling was implemented to catch common FORTH programming errors like stack underflow or undefined words.
