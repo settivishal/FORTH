@@ -4,6 +4,8 @@ module Eval where
 import Val
 import Data.Fixed(mod')
 import Text.Printf (printf)
+import System.IO (hFlush, stdout)
+import System.IO.Unsafe (unsafePerformIO)
 
 roundTo5 :: Float -> Float
 roundTo5 x = fromIntegral (round (x * 100000)) / 100000
@@ -98,10 +100,11 @@ eval "NEG" _                = error "Type mismatch in NEG"
 eval "DUP" (x:tl) = (x:x:tl)
 eval "DUP" [] = error("Stack underflow")
 
+-- EMIT
 eval "EMIT" (Integer n : tl) = 
     let char = toEnum (fromIntegral n) :: Char
-    in  putStrLn [char] `seq` tl  -- Print the character and return the rest of the stack
-
+    in unsafePerformIO (putChar char >> putChar '\n' >> hFlush stdout) `seq` tl
+-- error
 eval "EMIT" _ = error "Type mismatch in EMIT"
 
 -- STR: Converts the argument into a string
@@ -110,14 +113,17 @@ eval "STR" (x:tl) = case x of
     Real r    -> Id (printf "%.2f" r) : tl  -- Use printf to avoid scientific notation
     Id s      -> Id s : tl
     _         -> error "Type mismatch in STR"
+-- error
 eval "STR" [] = error "Stack underflow"
 
 -- CONCAT2: Concatenates two strings from the stack
-eval "CONCAT2" [Id str1, Id str2] = [Id (str1 ++ str2)]  -- Concatenate in correct order
+eval "CONCAT2" [Id str1, Id str2] = [Id (str1 ++ str2)]
+-- error
 eval "CONCAT2" _ = error "Type mismatch in CONCAT2"
 
 -- CONCAT3: Concatenates three strings from the stack
 eval "CONCAT3" (Id str1: Id str2: Id str3: tl) = Id (str1 ++ str2 ++ str3) : tl
+-- error
 eval "CONCAT3" _ = error "Type mismatch in CONCAT3"
 
 -- this must be the last rule
