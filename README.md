@@ -95,6 +95,17 @@ make clean
 ```
 FORTH/
 ├── dist-newstyle/            # Cabal build directory
+├── output/                   # Output for Test files
+│   ├── t1.out                # Output file for test 1
+│   ├── t2.out                # Output file for test 2
+│   ├── t3.out                # Output file for test 3
+│   ├── t4.out                # Output file for test 4
+│   ├── t5.out                # Output file for test 5
+│   ├── t6.out                # Output file for test 6
+│   ├── t7.out                # Output file for test 7
+│   ├── t8.out                # Output file for test 8
+│   ├── t9.out                # Output file for test 9
+│   └── t10.out               # Output file for test 10
 ├── tests/                    # Test FORTH programs
 │   ├── t1.4TH                # Test file 1
 │   ├── t2.4TH                # Test file 2
