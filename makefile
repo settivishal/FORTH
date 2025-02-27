@@ -1,19 +1,19 @@
 all: build update install
 
 build:
-	cabal build
+	@cabal build
 
 update:
-	cabal update
+	@cabal update
 
 install:
-	cabal install --overwrite-policy=always
+	@cabal install --overwrite-policy=always
 
 run:
-	cabal run FORTH $(args)
+	@cabal run FORTH $(args)
 
 test:
-	runhaskell EvalSpec.hs
+	@runhaskell EvalSpec.hs
 
 clean:
-	cabal clean
+	@cabal clean
