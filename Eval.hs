@@ -135,10 +135,10 @@ eval s l = Id s : l
 -- state is a stack and string pair
 evalOut :: String -> ([Val], String) -> ([Val], String) 
 -- print element at the top of the stack
-evalOut "." (Id x:tl, out) = (Id x:tl, out ++ x)
+evalOut "." (Id x:tl, out) = (tl, out ++ x)
 -- evalOut "." (Id x:tl, out) = (Id x:tl, out ++ "\"" ++ x ++ "\"")
-evalOut "." (Integer i:tl, out) = (Integer i:tl, out ++ (show i))
-evalOut "." (Real x:tl, out) = (Real x:tl, out ++ (show x))
+evalOut "." (Integer i:tl, out) = (tl, out ++ (show i))
+evalOut "." (Real x:tl, out) = (tl, out ++ (show x))
 evalOut "." ([], _) = error "Stack underflow"
 
 -- CR: prints a new line for formatting

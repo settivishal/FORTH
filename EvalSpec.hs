@@ -250,9 +250,9 @@ main = hspec $ do
   describe "evalOut" $ do
     context "." $ do
         it "prints top of stack" $ do
-            evalOut "." ([Id "x"], "") `shouldBe` ([Id "x"],"x")
-            evalOut "." ([Integer 2], "") `shouldBe` ([Integer 2], "2")
-            evalOut "." ([Real 2.2], "") `shouldBe` ([Real 2.2], "2.2")
+            evalOut "." ([Id "x"], "") `shouldBe` ([],"x")
+            evalOut "." ([Integer 2], "") `shouldBe` ([], "2")
+            evalOut "." ([Real 2.2], "") `shouldBe` ([], "2.2")
 
         it "errors on empty stack" $ do
             evaluate(evalOut "." ([], "")) `shouldThrow` errorCall "Stack underflow"
