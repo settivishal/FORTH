@@ -195,13 +195,13 @@ main = hspec $ do
     context "EMIT" $ do
         it "prints the character corresponding to ASCII code" $ do
             -- For ASCII 65 (A)
-            eval "EMIT" [Integer 65] `shouldBe` []  -- The character "A" will be printed to the console
+            eval "EMIT" [Integer 65] `shouldBe` [Id "A"]  -- The character "A" will be printed to the console
 
             -- For ASCII 97 (a)
-            eval "EMIT" [Integer 97] `shouldBe` []  -- The character "a" will be printed to the console
+            eval "EMIT" [Integer 97] `shouldBe` [Id "a"]  -- The character "a" will be printed to the console
 
             -- For ASCII 48 (0)
-            eval "EMIT" [Integer 48] `shouldBe` []  -- The character "0" will be printed to the console
+            eval "EMIT" [Integer 48] `shouldBe` [Id "0"]  -- The character "0" will be printed to the console
 
         it "throws error on non-integer value" $ do
             evaluate (eval "EMIT" [Real 65.0]) `shouldThrow` errorCall "Type mismatch in EMIT"
@@ -250,9 +250,9 @@ main = hspec $ do
   describe "evalOut" $ do
     context "." $ do
         it "prints top of stack" $ do
-            evalOut "." ([Id "x"], "") `shouldBe` ([Id "x"],"x")
-            evalOut "." ([Integer 2], "") `shouldBe` ([Integer 2], "2")
-            evalOut "." ([Real 2.2], "") `shouldBe` ([Real 2.2], "2.2")
+            evalOut "." ([Id "x"], "") `shouldBe` ([],"x")
+            evalOut "." ([Integer 2], "") `shouldBe` ([], "2")
+            evalOut "." ([Real 2.2], "") `shouldBe` ([], "2.2")
 
         it "errors on empty stack" $ do
             evaluate(evalOut "." ([], "")) `shouldThrow` errorCall "Stack underflow"
