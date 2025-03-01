@@ -101,9 +101,9 @@ eval "DUP" (x:tl) = (x:x:tl)
 eval "DUP" [] = error("Stack underflow")
 
 -- EMIT
-eval "EMIT" (Integer n : tl) = 
-    let char = toEnum (fromIntegral n) :: Char
-    in unsafePerformIO (putChar char >> putChar '\n' >> hFlush stdout) `seq` tl
+eval "EMIT" (Integer n : tl) 
+    | n >= 0 && n <= 127 = Id [toEnum (fromIntegral n) :: Char] : tl
+    | otherwise = error "Invalid ASCII code in EMIT"
 -- error
 eval "EMIT" _ = error "Type mismatch in EMIT"
 

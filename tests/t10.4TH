@@ -1,1 +1,1 @@
-65 DUP EMIT .
+65 EMIT .
