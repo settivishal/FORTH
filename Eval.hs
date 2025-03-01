@@ -112,7 +112,7 @@ eval "STR" (x:tl) = case x of
     Integer i -> Id (show i) : tl
     Real r    -> Id (printf "%.2f" r) : tl  -- Use printf to avoid scientific notation
     Id s      -> Id s : tl
-    _         -> error "Type mismatch in STR"
+    -- _         -> error "Type mismatch in STR"
 -- error
 eval "STR" [] = error "Stack underflow"
 
