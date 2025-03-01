@@ -12,6 +12,11 @@ install:
 run:
 	@cabal run FORTH $(args)
 
+TEST_FILES=$(wildcard tests/*.4TH)
+
+run-all-tests:
+	@make run args="$(TEST_FILES)"
+
 test:
 	@runhaskell EvalSpec.hs
 

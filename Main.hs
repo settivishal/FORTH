@@ -11,6 +11,7 @@ checkStack [] = putStrLn "The stack is empty."
 checkStack stack = do
     putStrLn "The stack is not empty. Current stack content:"
     print stack
+    putStrLn ""
 
 main :: IO ()
 main = do
@@ -20,7 +21,7 @@ main = do
         putStrLn $ "Processing file: " ++ file
         -- Read the file content
         contents <- readFile file
-        -- Interpret the contents (assumed to return a tuple with stack and output)
+        -- Interpret the contents
         let (stack, output) = interpret contents
         
         -- Print the output from the interpretation

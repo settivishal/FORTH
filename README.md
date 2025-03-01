@@ -58,18 +58,23 @@ This runs `cabal install` with the `--overwrite-policy=always` flag.
 
 ### Running the Interpreter
 
-To run the FORTH interpreter with test files:
+To run the FORTH interpreter with specific test files:
 
 ```bash
-make run args=<test file path>
+make run args="tests/t1.4TH tests/t2.4TH"
 ```
 
 The `args` parameter specifies the FORTH files to be processed. You can provide one or multiple files.
 
-Example of running all test files:
+<!-- Example of running all test files:
 
 ```bash
 make run args="tests/t1.4TH tests/t2.4TH tests/t3.4TH tests/t4.4TH tests/t5.4TH tests/t6.4TH tests/t7.4TH tests/t8.4TH tests/t9.4TH tests/t10.4TH"
+``` -->
+### Run All Tests
+To execute all test files in the `tests/` directory at once, use:
+```bash
+make run-all-tests
 ```
 
 ### Running Tests in EvalSpec.hs

@@ -101,9 +101,9 @@ eval "DUP" (x:tl) = (x:x:tl)
 eval "DUP" [] = error("Stack underflow")
 
 -- EMIT
-eval "EMIT" (Integer n : tl) = 
-    let char = toEnum (fromIntegral n) :: Char
-    in unsafePerformIO (putChar char >> putChar '\n' >> hFlush stdout) `seq` tl
+eval "EMIT" (Integer n : tl) 
+    | n >= 0 && n <= 127 = Id [toEnum (fromIntegral n) :: Char] : tl
+    | otherwise = error "Invalid ASCII code in EMIT"
 -- error
 eval "EMIT" _ = error "Type mismatch in EMIT"
 
@@ -112,7 +112,7 @@ eval "STR" (x:tl) = case x of
     Integer i -> Id (show i) : tl
     Real r    -> Id (printf "%.2f" r) : tl  -- Use printf to avoid scientific notation
     Id s      -> Id s : tl
-    _         -> error "Type mismatch in STR"
+    -- _         -> error "Type mismatch in STR"
 -- error
 eval "STR" [] = error "Stack underflow"
 
@@ -135,10 +135,10 @@ eval s l = Id s : l
 -- state is a stack and string pair
 evalOut :: String -> ([Val], String) -> ([Val], String) 
 -- print element at the top of the stack
-evalOut "." (Id x:tl, out) = (Id x:tl, out ++ x)
+evalOut "." (Id x:tl, out) = (tl, out ++ x)
 -- evalOut "." (Id x:tl, out) = (Id x:tl, out ++ "\"" ++ x ++ "\"")
-evalOut "." (Integer i:tl, out) = (Integer i:tl, out ++ (show i))
-evalOut "." (Real x:tl, out) = (Real x:tl, out ++ (show x))
+evalOut "." (Integer i:tl, out) = (tl, out ++ (show i))
+evalOut "." (Real x:tl, out) = (tl, out ++ (show x))
 evalOut "." ([], _) = error "Stack underflow"
 
 -- CR: prints a new line for formatting
