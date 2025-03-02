@@ -7,7 +7,9 @@ import Control.Monad (forM_)
 
 -- Function to check and print stack status
 checkStack :: Show a => [a] -> IO ()
-checkStack [] = putStrLn "The stack is empty."
+checkStack [] = do
+    putStrLn "The stack is empty."
+    putStrLn ""
 checkStack stack = do
     putStrLn "The stack is not empty. Current stack content:"
     print stack
